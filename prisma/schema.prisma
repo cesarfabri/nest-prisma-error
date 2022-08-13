@@ -15,9 +15,9 @@ model Arquivos {
   create_at DateTime @default(now())
   update_at DateTime @updatedAt()
 
-  name          String @unique
+  name          String  @unique
   type          String
-  size          Int    @default(0)
+  size          Decimal @default(0.0)
   original_name String
   path_url      String
 
