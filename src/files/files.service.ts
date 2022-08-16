@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
@@ -7,26 +7,44 @@ import { UpdateFileDto } from './dto/update-file.dto';
 export class FilesService {
   constructor(private readonly prisma: PrismaService) { }
 
-  create(createFileDto: CreateFileDto) {
-    return this.prisma.arquivos.create({ data: createFileDto});
+  async create(createFileDto: CreateFileDto) {
+    return await this.prisma.arquivos.create({ data: createFileDto});
   }
 
-  findAll() {
-    return this.prisma.arquivos.findMany();
+  async findAll() {
+    return await this.prisma.arquivos.findMany();
   }
 
-  findOne(id: string) {
-    return this.prisma.arquivos.findUnique({ where: { id }});
+  async findOne(id: string) {
+    const file = await this.prisma.arquivos.findUnique({ where: { id }});
+
+    if (!file) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+    }
+
+    return file;
   }
 
   update(id: string, updateFileDto: UpdateFileDto) {
-    return this.prisma.arquivos.update({
+    const file = this.prisma.arquivos.update({
       where: { id },
       data: updateFileDto
     });
+
+    if (!file) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+    }
+
+    return file;
   }
 
   remove(id: string) {
-    return this.prisma.arquivos.delete({ where: { id }});
+    const file = this.prisma.arquivos.delete({ where: { id }});
+
+    if (!file) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+    }
+
+    return file;
   }
 }

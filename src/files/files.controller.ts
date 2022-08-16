@@ -26,7 +26,7 @@ export class FilesController {
   @Get(':id')
   @ApiOkResponse({ type: FileEntity })
   async findOne(@Param('id') id: string) {
-    return new FileEntity(await this.filesService.findOne(id));
+    return await this.filesService.findOne(id);
   }
 
   @Patch(':id')
